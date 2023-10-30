@@ -37,7 +37,7 @@ class Student:
                 sum_values += sum(value) / len(value)
             return round(sum_values, 2)
         else:
-            print('Нет оценок')
+            print(f'Нет оценок у студента "{self.name} {self.surname}"')
 
 
 class Mentor:
@@ -72,7 +72,7 @@ class Lecturer(Mentor):
                 sum_values += sum(value) / len(value)
             return round(sum_values, 2)
         else:
-            print('Нет оценок')
+            print(f'Нет оценок у лектора "{self.name} {self.surname}"')
 
 
 class Reviewer(Mentor):
@@ -81,10 +81,11 @@ class Reviewer(Mentor):
         super().__init__(name, surname)
 
     def __str__(self):
-        return f'Имя: {self.name}\nФамилия: {self.surname}'
+        return (f'Имя: {self.name}\n'
+                f'Фамилия: {self.surname}')
 
     def rate_student(self, student, course, grade):
-        if isinstance(student, Student) and course in self.courses_attached\
+        if isinstance(student, Student) and course in self.courses_attached \
                 and course in student.courses_in_progress and grade in range(11):
             if course in student.grades:
                 student.grades[course] += [grade]
@@ -98,24 +99,24 @@ def average_students_grade_for_one_course(students, course):
     for student in students:
         if course in student.grades:
             return round(sum((list(student.grades.values())[0])) / len((list(student.grades.values())[0])), 2)
-    print('Нет такого курса в оценках лекторов')
+    return f'Курс {course} отсутствует у студентов'
 
 
-def average_lecturer_grade_for_one_course(lecturers, course):
+def average_lecturers_grade_for_one_course(lecturers, course):
     for lecturer in lecturers:
         if course in lecturer.grades:
             return round(sum((list(lecturer.grades.values())[0])) / len((list(lecturer.grades.values())[0])), 2)
-    print('Нет такого курса в оценках лекторов')
+    return f'Курс {course} отсутствует у лекторов'
 
 
-student_1 = Student('Ушаков', 'Лев')
-student_2 = Student('Зайцева', 'Милана')
-mentor_1 = Mentor('Семенов', 'Алексей')
-mentor_2 = Mentor('Савицкий', 'Константин')
-lecturer_1 = Lecturer('Иванова', 'Вероника')
-lecturer_2 = Lecturer('Макаров', 'Алексей')
-reviewer_1 = Reviewer('Сычев', 'Федор')
-reviewer_2 = Reviewer('Новикова', 'Валерия')
+student_1 = Student('Лев', 'Ушаков')
+student_2 = Student('Милана', 'Зайцева')
+mentor_1 = Mentor('Алексей', 'Семенов')
+mentor_2 = Mentor('Константин', 'Савицкий')
+lecturer_1 = Lecturer('Вероника', 'Иванова')
+lecturer_2 = Lecturer('Алексей', 'Макаров')
+reviewer_1 = Reviewer('Федор', 'Сычев')
+reviewer_2 = Reviewer('Валерия', 'Новикова')
 
 student_1.courses_in_progress += ['Python', 'Data Science']
 student_1.finished_courses += ['HTML']
@@ -144,5 +145,34 @@ reviewer_2.rate_student(student_1, 'Data Science', 10)
 reviewer_2.rate_student(student_2, 'Python', 9)
 reviewer_2.rate_student(student_2, 'Python', 7)
 
-print(average_students_grade_for_one_course([student_1, student_2], 'Python'))
-print(average_lecturer_grade_for_one_course([lecturer_1, lecturer_2], 'Python'))
+print(f'Студент 1:\n{student_1}\n', end=f'{"-" * 50}\n')
+print(f'Студент 2:\n{student_2}\n', end=f'{"-" * 50}\n')
+print(f'Лектор 1:\n{lecturer_1}\n', end=f'{"-" * 50}\n')
+print(f'Лектор 2:\n{lecturer_2}\n', end=f'{"-" * 50}\n')
+print(f'Ревьюер 1:\n{reviewer_1}\n', end=f'{"-" * 50}\n')
+print(f'Ревьюер 2:\n{reviewer_2}\n', end=f'{"-" * 50}\n')
+
+if student_1 < student_2:
+    print(f'У студента {student_1.name} {student_1.surname} средняя оценка по домашним заданиям меньше, '
+          f'чем у студента {student_2.name} {student_2.surname}')
+elif student_1 > student_2:
+    print(f'У студента {student_1.name} {student_1.surname} средняя оценка по домашним заданиям больше, '
+          f'чем у студента {student_2.name} {student_2.surname}')
+else:
+    print(f'У студентов {student_1.name} {student_1.surname} и {student_2.name} {student_2.surname} '
+          f'средние оценки по домашним заданиям одинаковы')
+
+if lecturer_1 < lecturer_2:
+    print(f'У лектора {lecturer_1.name} {lecturer_1.surname} средняя оценка за лекции меньше, '
+          f'чем у лектора {lecturer_2.name} {lecturer_2.surname}')
+elif lecturer_1 > lecturer_2:
+    print(f'У лектора {lecturer_1.name} {lecturer_1.surname} средняя оценка за лекции больше, '
+          f'чем у лектора {lecturer_2.name} {lecturer_2.surname}')
+else:
+    print(f'У студентов {lecturer_1.name} {lecturer_1.surname} и {lecturer_2.name} {lecturer_2.surname} '
+          f'средние оценки за лекции одинаковы')
+
+print(f'Средняя оценка по домашним заданиям по всем студентам в рамках курса: '
+      f'{average_students_grade_for_one_course([student_1, student_2], "Python")}')
+print(f'Средняя оценка за лекции всех лекторов в рамках курса: '
+      f'{average_lecturers_grade_for_one_course([lecturer_1, lecturer_2], "Data Science")}')
